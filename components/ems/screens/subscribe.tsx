@@ -1,7 +1,9 @@
 'use client'
 
 import { NeonCard, SectionLabel } from '@/components/ems/primitives'
-import { CheckCheck, Crown, PhoneOff, Radar, ScanSearch, Sparkles } from 'lucide-react'
+import { Checkout } from '@/components/ems/checkout'
+import { PLANS } from '@/lib/products'
+import { CheckCheck, Crown, PhoneOff, Radar, ScanSearch, Sparkles, X } from 'lucide-react'
 import { useState } from 'react'
 
 const features = [
@@ -12,8 +14,10 @@ const features = [
   { icon: CheckCheck, text: 'Real‑time protection for up to 5 devices' },
 ]
 
+const plan = PLANS[0]
+
 export function SubscribeScreen() {
-  const [subscribed, setSubscribed] = useState(false)
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
 
   return (
     <div className="space-y-5">
@@ -55,15 +59,14 @@ export function SubscribeScreen() {
 
           <button
             type="button"
-            onClick={() => setSubscribed((s) => !s)}
-            aria-pressed={subscribed}
+            onClick={() => setCheckoutOpen(true)}
             className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-accent/70 bg-accent/25 py-3.5 font-display text-sm font-bold uppercase tracking-wider text-accent-foreground glow-magenta transition-transform active:scale-[0.98]"
           >
             <Crown className="h-4 w-4" aria-hidden="true" />
-            {subscribed ? 'Trial active — you’re protected' : 'Start 7‑day free trial'}
+            Start 7‑day free trial
           </button>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">
-            Then $9.99/month. Billed securely.
+            Then $9.99/month. Billed securely by Stripe.
           </p>
         </div>
       </NeonCard>
@@ -74,6 +77,43 @@ export function SubscribeScreen() {
           members · Bank‑grade encryption · Zero data selling
         </p>
       </NeonCard>
+
+      {checkoutOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Subscribe to EMS Premium"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-background/80 backdrop-blur-sm"
+          onClick={() => setCheckoutOpen(false)}
+        >
+          <div
+            className="relative max-h-[92%] w-full max-w-md overflow-y-auto rounded-t-2xl border-t border-accent/40 bg-card glow-magenta"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border/60 bg-card/95 px-4 py-3 backdrop-blur">
+              <div>
+                <p className="font-display text-sm font-bold uppercase tracking-wider text-accent">
+                  EMS Premium
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  $9.99/month · 7‑day free trial
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCheckoutOpen(false)}
+                aria-label="Close checkout"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+            <div className="p-4">
+              <Checkout planId={plan.id} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
